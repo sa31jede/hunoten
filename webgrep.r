@@ -31,25 +31,59 @@ library("curl")
 # ----------------
 # Einlesen der URLS, hinter denen die Notenstatistiken hinterlegt sind.
 
-urls = "urls.txt" %>% 
-    read_lines()
+urls = c("https://www.wiwi.hu-berlin.de/de/studium/pa/noten/",
+    "https://www.wiwi.hu-berlin.de/de/studium/pa/noten/SoSe%202018",
+    "https://www.wiwi.hu-berlin.de/de/studium/pa/noten/wintersemester-17-18",
+    "https://www.wiwi.hu-berlin.de/de/studium/pa/noten/copy3_of_informationen-zur-notenverbuchung-und-pruefungseinsichtstermine",
+    "https://www.wiwi.hu-berlin.de/de/studium/pa/noten/copy_of_informationen-zur-notenverbuchung-und-pruefungseinsichtstermine",
+    "https://www.wiwi.hu-berlin.de/de/studium/pa/noten/Sommersemester_2016",
+    "https://www.wiwi.hu-berlin.de/de/studium/pa/noten/ws201516")
+
+# Grep I
+# ------
+# 
+
+srcs = tibble()  
+    
+for(url in urls)
+{
+    url %>%
+        curl::curl_download("webpage.html")
+   
+    x = "webpage.html" %>%
+        read_lines() %>%
+        str_extract("(?<=href=\").+?(?=.pdf)") %>%
+        enframe()
+        
+    y = x %>%
+        drop_na() %>%
+        transmute(value = value %p% ".pdf")
+        
+    srcs = srcs %>%
+        bind_rows(y)
+}
+
+srcs = srcs %>%
+    filter(str_detect(value, "Memorandum") != 1) %>%
+    pull(value)
 
 
-# Grep
-# ----
+# Grep II
+# -------
 # df0 ist der Datensatz, in dem die Daten gesammelt werden. In der Schleife wird
 # dieser dann mit den entsprechend ge-"grep"'ten Notenstatistiken befüllt. 
 
 df0  = tibble()
 
-for(i in seq(1, length(urls), 1))
+i = 1
+
+for(src in srcs)
 {
-    "\n[" %p% str_pad(i, str_length(length(urls)), "left", " ") %p% "] Trying to fetch ~" %p% str_sub(pluck(urls, i), -32) %p% " …" %>%
+    "\n[" %p% str_pad(i, nchar(length(urls)), "left", " ") %p% "] Trying to fetch ~" %p% str_sub(src, -32) %p% " …" %>%
         message()
 
     # Mit curl werden die PDFs heruntergeladen und als "noten.pdf".
-    urls %>%
-        pluck(i) %>% 
+    src %>%
         curl::curl_download("noten.pdf")
     
     # Gab es Probleme?
@@ -57,14 +91,14 @@ for(i in seq(1, length(urls), 1))
     #message("[", i, "] Failed ✗\nContinuing with ", i + 1, "...\n\n") 
     #next
        
-    "[" %p% str_pad(i, str_length(length(urls)), "left", " ") %p% "] Finished ✓" %>%
+    "[" %p% str_pad(i, nchar(length(urls)), "left", " ") %p% "] Finished ✓" %>%
         message()
        
     # Die PDF wird in eine Textdatei umgewandelt.
     x = "noten.pdf" %>% 
         pdftools::pdf_text()
     
-    "[" %p% str_pad(i, str_length(length(urls)), "left", " ") %p% "] Converting PDF to ASCII text …" %>%
+    "[" %p% str_pad(i, nchar(length(urls)), "left", " ") %p% "] Converting PDF to ASCII text …" %>%
         message()
     
     # Gab es Probleme?
@@ -72,7 +106,7 @@ for(i in seq(1, length(urls), 1))
     #message("[", i, "] Failed ✗\nContinuing with ", i + 1, "...\n\n") 
     #next
     
-    "[" %p% str_pad(i, str_length(length(urls)), "left", " ") %p% "] Converted ✓" %>%
+    "[" %p% str_pad(i, nchar(length(urls)), "left", " ") %p% "] Converted ✓" %>%
         message()
     
         
@@ -212,7 +246,7 @@ for(i in seq(1, length(urls), 1))
         )
     
     # verbose...
-    "[" %p% str_pad(i, str_length(length(urls)), "left", " ") %p% "] Entry:\n" %p% paste(paste(rep(" ", str_length(length(urls)) + 3), collapse = ""), collapse = "") %p% pluck(pull(y, modul), 1) %p% " (" %p% pluck(pull(y, modulid), 1) %p% ")\n" %p% paste(rep(" ", str_length(length(urls)) + 3), collapse = "") %p% "Prüfer·in: " %p% pluck(pull(y, pruefende), 1) %p% " (" %p% pluck(pull(y, semester), 1) %p% ")\n" %p% paste(rep(" ", str_length(length(urls)) + 3), collapse = "") %p% rep(" ", 4) %p% paste(str_pad(pull(y, note), 3, "left", " "), collapse = " ") %p% "\n" %p% paste(rep(" ", str_length(length(urls)) + 3), collapse = "") %p% rep(" ", 4) %p% paste(str_pad(pull(y, teiln), 3, "left", " "), collapse = " ") %p% "\n" %p% paste(rep(" ", str_length(length(urls)) + 3), collapse = "") %p% "Durchschnitt/Median/Durchfallquote\n" %p% paste(rep(" ", str_length(length(urls)) + 3), collapse = "") %p% pluck(pull(y, avggrepd), 1) %p% "/" %p% pluck(pull(y, medgrepd), 1) %p% "/" %p% (pluck(pull(y, failratiogrepd), 1) * 100) %p% " %\n" %p% paste(rep(" ", str_length(length(urls)) + 3), collapse = "") %p% "Eingetragen am: " %p% pluck(pull(y, stand), 1) %p% "\n" %>%
+    "[" %p% str_pad(i, nchar(length(urls)), "left", " ") %p% "] Entry:\n" %p% paste(rep(" ", nchar(length(urls)) + 3), collapse = "") %p% pluck(pull(y, modul), 1) %p% " (" %p% pluck(pull(y, modulid), 1) %p% ")\n" %p% paste(rep(" ", nchar(length(urls)) + 3), collapse = "") %p% "Prüfer·in: " %p% pluck(pull(y, pruefende), 1) %p% " (" %p% pluck(pull(y, semester), 1) %p% ")\n" %p% paste(rep(" ", nchar(length(urls)) + 3), collapse = "") %p% rep(" ", 4) %p% paste(str_pad(pull(y, note), 3, "left", " "), collapse = " ") %p% "\n" %p% paste(rep(" ", nchar(length(urls)) + 3), collapse = "") %p% rep(" ", 4) %p% paste(str_pad(pull(y, teiln), 3, "left", " "), collapse = " ") %p% "\n" %p% paste(rep(" ", nchar(length(urls)) + 3), collapse = "") %p% "Durchschnitt/Median/Durchfallquote\n" %p% paste(rep(" ", nchar(length(urls)) + 3), collapse = "") %p% pluck(pull(y, avggrepd), 1) %p% "/" %p% pluck(pull(y, medgrepd), 1) %p% "/" %p% (pluck(pull(y, failratiogrepd), 1) * 100) %p% " %\n" %p% paste(rep(" ", nchar(length(urls)) + 3), collapse = "") %p% "Eingetragen am: " %p% pluck(pull(y, stand), 1) %p% "\n" %>%
         pluck(1) %>%
         message() 
     
@@ -221,13 +255,16 @@ for(i in seq(1, length(urls), 1))
     # Füge die extrahierten Werte zum Datensatz hinzu.
     df0 = df0 %>% 
         bind_rows(y)
+        
+   i = i + 1
 }
 
 # Save Data
 # ---------
 # Die Daten im Wide Format werden abschließend als csv gespeichert.
 
-df0 %>%    
+df0 %>%
+    drop_na() %>%    
     spread(note, teiln) %>% 
     write_csv("notenstats.csv")
 

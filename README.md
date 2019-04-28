@@ -1,9 +1,5 @@
 # HU WiWi Noten Web Grepping
-Das Skript "grep"t die Notenstatistiken aus den von der HU unter 
-
-     https://www.wiwi.hu-berlin.de/de/studium/pa/noten
-     
-veröffentlichten Notenstatistiken und speichert sie schön in einem gängigen Datensatzformat, das weiterreichende, detaillierte Analysen der Notenverteilungen erlaubt.
+Das Skript "grep"t die Notenstatistiken aus den von der HU unter https://www.wiwi.hu-berlin.de/de/studium/pa/noten veröffentlichten Notenstatistiken und speichert sie schön in einem gängigen Datensatzformat, das weiterreichende, detaillierte Analysen der Notenverteilungen erlaubt.
 
 
 ## Todo / Hinweis

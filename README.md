@@ -1,7 +1,7 @@
 # hunoten
 
-## About
+### About
 
-## Instructions
+### Instructions
 
-## Code
+### Code

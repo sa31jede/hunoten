@@ -1,13 +1,19 @@
 # HU WiWi Noten Web Grepping
+Das Skript "grep"t die Notenstatistiken aus den von der HU unter 
+
+     https://www.wiwi.hu-berlin.de/de/studium/pa/noten
+veröffentlichten Notenstatistiken und speichert sie schön in einem gängigen Datensatzformat, sodass weiterreichende, detaillierte Analysen der Verteilungen vorgenommen werden können.
+
 
 ### Todo / Hinweis
 * Die Datei `urls.txt` wird im selben Verzeichnis benötigt
-* Manchmal kommt es zu unerklärbaren Fehlern beim Aufruf von curl ("Error in HTTP2 layer")
+* Manchmal kommt es zu unerklärbaren Fehlern beim Aufruf von curl (`Error in HTTP2 layer`)
 * Semesterstring unvollständig
 * Nur ein·e Prüfer·in wird erfasse
 * Die Zeilen werden fix bestimmt und nicht dynamisch
 * Es wird nicht überprüft, ob es zu Fehlern beim Download und/oder Konvertieren kommt
 * Code in manchnen Zeilen länger als 80 Zeichen
+* URL Liste auf die anderen Semester ausweiten
 
 ### R Code
 

@@ -5,7 +5,7 @@ Das Skript "grep"t die Notenstatistiken aus den von der HU unter
 veröffentlichten Notenstatistiken und speichert sie schön in einem gängigen Datensatzformat, das weiterreichende, detaillierte Analysen der Notenverteilungen erlaubt.
 
 
-### Todo / Hinweis
+## Todo / Hinweis
 * Die Datei `urls.txt` wird im selben Verzeichnis benötigt
 * Manchmal kommt es zu unerklärbaren Fehlern beim Aufruf von curl (`Error in HTTP2 layer`)
 * Semesterstring unvollständig
@@ -15,7 +15,7 @@ veröffentlichten Notenstatistiken und speichert sie schön in einem gängigen D
 * Code in manchnen Zeilen länger als 80 Zeichen
 * URL Liste auf die anderen Semester ausweiten
 
-### R Code
+## R Code
 
 ```r
 # **************************************************************************** #
